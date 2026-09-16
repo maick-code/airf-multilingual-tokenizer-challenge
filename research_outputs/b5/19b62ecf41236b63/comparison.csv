@@ -1,3 +1,0 @@
-candidate,status,score_competition,score_checker,score_delta,base_score,guardrail_penalty,reconstruction_penalty,headroom_percent,strict_failures,zero_unk,score_agreement,leaderboard_failure,throughput_chars_per_second,elapsed_seconds,vocab_size,sha256,admissible,reason
-b4-reference,reference,1.9396669738781722,1.9396669738781722,0,1.9396669738781722,0,0,1.7871994392793225,0,True,True,,1030426.688391801,2.8630032910000409,10000,b2f9a461ce1b0e8bff07c00d982614f49d555464b8fb1efa46e66b08b67013e4,True,référence b4
-fr125-yo5-am5,measured,1.9384090338032391,1.9384090338032391,0,1.9384090338032391,0,0,2.0515536681751971,0,True,True,,1407043.0583687644,2.0966771289999997,10000,6f387416333fdfff5d45135313b00d5ef5ffd580b4c15ad851cd01f13b81d0e5,True,
