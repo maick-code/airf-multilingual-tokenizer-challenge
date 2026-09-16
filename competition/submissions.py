@@ -7,8 +7,24 @@ from pathlib import Path
 
 import yaml
 
-SLUG_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+SLUG_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$")
 MAX_METADATA_BYTES = 16 * 1024
+
+
+def check_slug(name: str) -> str:
+    """Return the directory name unchanged once it is safe to publish.
+
+    The directory name is the submission's identity: the leaderboard links
+    straight to ``submissions/<name>``, so it is never rewritten. It only has to
+    be safe as a path segment and a URL, which rules out separators, leading
+    dots and whitespace. ``mk_team`` and ``MK_Team`` are both fine as they are.
+    """
+    if not SLUG_PATTERN.fullmatch(name):
+        raise ValueError(
+            f"submission folder {name!r} must start with a letter or digit and "
+            "use only letters, digits, hyphens, underscores and dots"
+        )
+    return name
 
 
 @dataclass(frozen=True)
@@ -53,8 +69,7 @@ def validate_submission_directory(path: str | Path) -> tuple[Metadata, Path]:
     path = Path(path)
     if not path.is_dir():
         raise ValueError(f"submission directory not found: {path}")
-    if not SLUG_PATTERN.fullmatch(path.name):
-        raise ValueError("submission folder must be a lowercase kebab-case team slug")
+    check_slug(path.name)
     allowed = {"tokenizer.json", "metadata.yml", "notebook.ipynb", "README.md"}
     symlinks = sorted(item.name for item in path.iterdir() if item.is_symlink())
     if symlinks:

@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from .data import load_dataset
-from .metrics import guardrail_breaches, score_tokenizer
+from .metrics import score_tokenizer
 from .submissions import validate_submission_directory
 from .validation import validate_tokenizer
 
@@ -24,14 +24,6 @@ def evaluate_submission(
     result = score_tokenizer(
         report.tokenizer, examples, benchmark_repeats=benchmark_repeats
     )
-    breaches = guardrail_breaches(result.fertility)
-    if breaches:
-        detail = ", ".join(
-            f"{language} fertility {result.fertility[language]:.3f}"
-            for language in breaches
-        )
-        raise ValueError(f"context-language guardrail exceeded: {detail}")
-
     return {
         "slug": Path(submission_dir).name,
         "team": metadata.team,

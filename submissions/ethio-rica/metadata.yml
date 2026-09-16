@@ -1,0 +1,5 @@
+team: ethio-rica
+members:
+  - Yohannes Mengistie
+affiliation: Addis Ababa, Ethiopia
+approach: Lossless byte-level BPE (10k vocab, NFC only) with our own word/punctuation split rule; target languages oversampled in training; 100% exact reconstruction.

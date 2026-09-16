@@ -24,7 +24,6 @@ jobs:
           enable-cache: true
       - run: uv sync --frozen --dev
       - name: Obtain evaluation data
-        id: data
         env:
           HIDDEN_DATASET_ID: ${{ secrets.HIDDEN_DATASET_ID }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
@@ -35,28 +34,48 @@ jobs:
               --repo-id "$HIDDEN_DATASET_ID" \
               --file public_test.csv \
               --output artifacts/public_test.csv
-            echo "strict=--strict" >> "$GITHUB_OUTPUT"
           else
-            echo "Prototype mode: using the bundled smoke fixture. It is too small for"
-            echo "the guardrail to be meaningful, so failures are reported but do not"
-            echo "fail the run. Configure HIDDEN_DATASET_ID and HF_TOKEN before launch."
+            echo "Prototype mode: using the bundled smoke fixture. It is far too"
+            echo "small to produce meaningful scores. Configure HIDDEN_DATASET_ID"
+            echo "and HF_TOKEN before launch."
             cp tests/fixtures/demo_public_test.csv artifacts/public_test.csv
-            echo "strict=" >> "$GITHUB_OUTPUT"
           fi
       - name: Evaluate accepted submissions
         run: >-
           uv run --frozen python scripts/update_leaderboard.py
           --data artifacts/public_test.csv
           --repeats 3
-          ${{ steps.data.outputs.strict }}
-      - name: Commit generated leaderboard
+      - name: Report rejected submissions
+        if: always()
         run: |
+          python - <<'REPORT' >> "$GITHUB_STEP_SUMMARY"
+          import json, pathlib
+          path = pathlib.Path("artifacts/evaluation_failures.json")
+          failures = json.loads(path.read_text()) if path.is_file() else []
+          if not failures:
+              print("## Submissions\n\nEvery submission evaluated cleanly.")
+          else:
+              print(f"## {len(failures)} submission(s) rejected\n")
+              print("| Submission | Reason |")
+              print("| :--- | :--- |")
+              for failure in failures:
+                  reason = failure["error"].replace("|", "\\|")
+                  print(f"| `{failure['slug']}` | {reason} |")
+              print("\nValid submissions were still scored and published.")
+          REPORT
+      - name: Commit generated leaderboard
+        if: always()
+        run: |
+          # leaderboard.json carries a generated_at stamp, so it differs on
+          # every run. Standings are what matter, so gate on LEADERBOARD.md and
+          # discard a timestamp-only change to avoid a daily empty commit.
           if git diff --quiet -- LEADERBOARD.md; then
             echo "Leaderboard is unchanged."
+            git checkout -- leaderboard.json
             exit 0
           fi
           git config user.name "amtc-leaderboard-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add LEADERBOARD.md
+          git add LEADERBOARD.md leaderboard.json
           git commit -m "chore: update nightly leaderboard"
           git push

@@ -18,6 +18,14 @@ SCORED_LANGUAGES = ("ha", "sw", "yo", "am")
 CONTEXT_LANGUAGES = ("en", "fr")
 CONTEXT_FERTILITY_RATIO = 1.15
 
+# Score added for text a tokenizer fails to reconstruct, as
+# RECONSTRUCTION_PENALTY times the share of rows lost. It discourages
+# approaches that reduce token counts by modifying or deleting the input rather
+# than by compressing it. The weight is set well above any gain such an
+# approach can earn, and the cost is proportional, so a tokenizer that loses a
+# fraction of a percent pays only a fraction of a point.
+RECONSTRUCTION_PENALTY = 3.0
+
 # Unknown tokens are penalised rather than disqualifying. One percent of
 # words falling back to [UNK] adds 1.00 to that language's score.
 UNKNOWN_PENALTY = 100.0

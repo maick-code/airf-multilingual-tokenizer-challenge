@@ -31,6 +31,7 @@ Your tokenizer must:
 - load with Hugging Face `tokenizers==0.22.1`;
 - have at most 10,000 entries by `get_vocab_size(with_added_tokens=True)`;
 - produce at least one token and a non-empty decode in all six languages;
+- restore the text it encodes, since anything lost is charged at 3x in the score;
 - need no external files, network access, or custom code;
 - be built by your own code from the provided training data, with no
   pretrained tokenizer, external corpus, or third-party API involved.
@@ -44,7 +45,9 @@ automated check runs on every push to that branch, and nothing else triggers it:
 git checkout -b submission
 ```
 
-Then create one directory for your team, named in lowercase kebab case:
+Then create one directory for your team. Lowercase kebab case reads best,
+but the name is used exactly as you write it, so `mk_team` and `MK_Team`
+are both fine. Letters, digits, hyphens, underscores and dots only:
 
 ```text
 submissions/

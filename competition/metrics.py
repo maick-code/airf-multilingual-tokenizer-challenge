@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import statistics
 import time
+import unicodedata
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
@@ -10,6 +11,7 @@ from pathlib import Path
 from tokenizers import Tokenizer
 
 from .constants import (
+    RECONSTRUCTION_PENALTY,
     CONTEXT_FERTILITY_RATIO,
     CONTEXT_LANGUAGES,
     LANGUAGES,
@@ -30,6 +32,9 @@ class ScoreResult:
     fertility: dict[str, float]
     unknown_rate: dict[str, float]
     penalised: dict[str, float]
+    guardrail_penalty: float
+    guardrail_overages: dict[str, float]
+    reconstruction: float
     token_counts: dict[str, int]
     word_counts: dict[str, int]
     unknown_tokens: int
@@ -42,6 +47,9 @@ class ScoreResult:
             "fertility": self.fertility,
             "unknown_rate": self.unknown_rate,
             "penalised": self.penalised,
+            "guardrail_penalty": self.guardrail_penalty,
+            "guardrail_overages": self.guardrail_overages,
+            "reconstruction": self.reconstruction,
             "token_counts": self.token_counts,
             "word_counts": self.word_counts,
             "unknown_tokens": self.unknown_tokens,
@@ -116,19 +124,72 @@ def competition_score(
     return sum(scores[language] for language in SCORED_LANGUAGES) / len(SCORED_LANGUAGES)
 
 
-def guardrail_breaches(fertility: dict[str, float]) -> list[str]:
-    """Return context languages that cost too much relative to the scored ones.
+def guardrail_budget(fertility: dict[str, float]) -> float:
+    """Return the fertility a context language may reach before it is charged.
 
     The limit is relative to the submission's own scored average, so a
     deliberately simple tokenizer is judged on balance rather than on absolute
     fertility.
     """
-    budget = competition_score(fertility, {}) * CONTEXT_FERTILITY_RATIO
+    return competition_score(fertility, {}) * CONTEXT_FERTILITY_RATIO
+
+
+def guardrail_overages(fertility: dict[str, float]) -> dict[str, float]:
+    """Return how far each context language sits above the guardrail budget.
+
+    A language at or under the budget contributes nothing, so a submission that
+    keeps English and French in balance is unaffected by the guardrail.
+    """
+    budget = guardrail_budget(fertility)
+    return {
+        language: max(0.0, fertility.get(language, 0.0) - budget)
+        for language in CONTEXT_LANGUAGES
+    }
+
+
+def guardrail_penalty(fertility: dict[str, float]) -> float:
+    """Return the total score added for neglecting English and French."""
+    return sum(guardrail_overages(fertility).values())
+
+
+def guardrail_breaches(fertility: dict[str, float]) -> list[str]:
+    """Return the context languages that are over the guardrail budget."""
     return [
         language
-        for language in CONTEXT_LANGUAGES
-        if fertility.get(language, 0.0) > budget
+        for language, overage in guardrail_overages(fertility).items()
+        if overage > 0.0
     ]
+
+
+def reconstruction_rate(tokenizer: Tokenizer, examples: list[Example]) -> float:
+    """Return the share of rows the tokenizer reconstructs exactly.
+
+    A row counts as reconstructed when ``decode(encode(text))`` equals the
+    original.
+    Three things are ignored before comparing, because none of them discards any
+    of the text:
+
+    * Unicode NFC, applied to both sides, so NFC normalisation is not penalised.
+    * Special tokens, since a ``[CLS]``/``[SEP]`` post-processor adds structure.
+    * Leading and trailing whitespace, since ``add_prefix_space=True`` prepends a
+      space rather than removing one.
+
+    Everything else counts as loss: folded case, stripped diacritics, deleted
+    punctuation, and whitespace removed from inside the text.
+    """
+    if not examples:
+        return 1.0
+    texts = [unicodedata.normalize("NFC", item.text) for item in examples]
+    encodings = tokenizer.encode_batch(texts)
+    reconstructed = sum(
+        1
+        for text, encoding in zip(texts, encodings)
+        if unicodedata.normalize(
+            "NFC", tokenizer.decode(encoding.ids, skip_special_tokens=True)
+        ).strip()
+        == text.strip()
+    )
+    return reconstructed / len(texts)
 
 
 def round_trip_failures(
@@ -173,11 +234,18 @@ def score_tokenizer(
         tokenizer, examples
     )
     throughput, elapsed = benchmark(tokenizer, examples, repeats=benchmark_repeats)
+    overages = guardrail_overages(fertility)
+    reconstruction = reconstruction_rate(tokenizer, examples)
     return ScoreResult(
-        score=competition_score(fertility, unknown_rate),
+        score=competition_score(fertility, unknown_rate)
+        + sum(overages.values())
+        + RECONSTRUCTION_PENALTY * (1.0 - reconstruction),
         fertility=fertility,
         unknown_rate=unknown_rate,
         penalised=penalised_scores(fertility, unknown_rate),
+        guardrail_penalty=sum(overages.values()),
+        guardrail_overages=overages,
+        reconstruction=reconstruction,
         token_counts=token_counts,
         word_counts=word_counts,
         unknown_tokens=sum(

@@ -1,0 +1,95 @@
+{
+  "generated_at": "2026-09-16T06:03:54+00:00",
+  "metric": "Average tokens per word plus a 100x unknown-token penalty, across Hausa, Swahili, Yoruba and Amharic, plus any amount by which English or French exceeds 1.15 times that average, plus 3x the share of rows the tokenizer fails to reconstruct exactly. Lower is better.",
+  "repository": "aims-ai-research-foundations/airf-multilingual-tokenizer-challenge",
+  "entries": [
+    {
+      "rank": 1,
+      "team": "mk_team",
+      "slug": "mk_team",
+      "status": "ranked",
+      "score": 1.9551,
+      "fertility": 1.9551,
+      "unknown_rate": 0.0,
+      "guardrail_penalty": 0.0,
+      "reconstruction": 1.0,
+      "speed_chars_per_second": 6290218,
+      "vocab_size": 10000,
+      "evaluated_at": "2026-09-16T06:03:34+00:00",
+      "fertility_by_language": {
+        "en": 2.1443,
+        "fr": 2.2022,
+        "ha": 1.6388,
+        "sw": 1.8507,
+        "yo": 1.9363,
+        "am": 2.3947
+      }
+    },
+    {
+      "rank": 2,
+      "team": "Maick Dane Nkou",
+      "slug": "maick-dane-nkou",
+      "status": "ranked",
+      "score": 1.9672,
+      "fertility": 1.9672,
+      "unknown_rate": 0.0,
+      "guardrail_penalty": 0.0,
+      "reconstruction": 1.0,
+      "speed_chars_per_second": 4701138,
+      "vocab_size": 10000,
+      "evaluated_at": "2026-09-16T06:03:34+00:00",
+      "fertility_by_language": {
+        "en": 2.0587,
+        "fr": 2.1586,
+        "ha": 1.7329,
+        "sw": 1.9567,
+        "yo": 1.8497,
+        "am": 2.3296
+      }
+    },
+    {
+      "rank": 3,
+      "team": "Dekel DataSphere",
+      "slug": "Dekel_datasphere",
+      "status": "ranked",
+      "score": 1.9913,
+      "fertility": 1.9913,
+      "unknown_rate": 0.0,
+      "guardrail_penalty": 0.0,
+      "reconstruction": 1.0,
+      "speed_chars_per_second": 2721264,
+      "vocab_size": 10000,
+      "evaluated_at": "2026-09-16T06:03:34+00:00",
+      "fertility_by_language": {
+        "en": 2.0666,
+        "fr": 2.1735,
+        "ha": 1.6698,
+        "sw": 1.8966,
+        "yo": 1.8944,
+        "am": 2.5046
+      }
+    },
+    {
+      "rank": 4,
+      "team": "ethio-rica",
+      "slug": "ethio-rica",
+      "status": "ranked",
+      "score": 2.0067,
+      "fertility": 2.0067,
+      "unknown_rate": 0.0,
+      "guardrail_penalty": 0.0,
+      "reconstruction": 1.0,
+      "speed_chars_per_second": 4109813,
+      "vocab_size": 10000,
+      "evaluated_at": "2026-09-16T06:03:34+00:00",
+      "fertility_by_language": {
+        "en": 2.0591,
+        "fr": 2.1817,
+        "ha": 1.7315,
+        "sw": 1.917,
+        "yo": 1.9644,
+        "am": 2.4138
+      }
+    }
+  ]
+}
