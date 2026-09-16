@@ -1,0 +1,21 @@
+{
+  "config": {
+    "name": "fr1125-yo5-am5",
+    "units": {
+      "en": 8,
+      "fr": 9,
+      "ha": 32,
+      "sw": 32,
+      "yo": 40,
+      "am": 40
+    },
+    "denominator": 8,
+    "vocab_size": 10000,
+    "min_frequency": 5,
+    "architecture": "space_word_v1"
+  },
+  "train_sha256": "85140695f33ff87ead838dbac449fbc7f13aec72dde4129556d7538ba17cbc4f",
+  "tokenizer_sha256": "da70428c2c6e1de9078bfe8392b47a3af5dc63ae5d500108aa54d11617c54d29",
+  "training_seconds": 65.35497430299995,
+  "weighted_rows": 805000
+}

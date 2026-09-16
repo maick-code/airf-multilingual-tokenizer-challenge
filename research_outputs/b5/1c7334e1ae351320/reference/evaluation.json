@@ -1,0 +1,185 @@
+{
+  "name": "b4-reference",
+  "config": {
+    "name": "b4-reference",
+    "units": {
+      "en": 8,
+      "fr": 8,
+      "ha": 32,
+      "sw": 32,
+      "yo": 32,
+      "am": 32
+    },
+    "denominator": 8,
+    "vocab_size": 10000,
+    "min_frequency": 5,
+    "architecture": "space_word_v1",
+    "source": "0d9ba4bccbc5c5a5fc48ed76d655ba4211ee2749"
+  },
+  "tokenizer_sha256": "b2f9a461ce1b0e8bff07c00d982614f49d555464b8fb1efa46e66b08b67013e4",
+  "competition": {
+    "slug": "b4-reference",
+    "team": "Maick Dane Nkou research",
+    "members": [
+      "Maick Dane Nkou"
+    ],
+    "affiliation": "research-only",
+    "approach": "candidate evaluation only; not a submission",
+    "vocab_size": 10000,
+    "score": 1.9396669738781722,
+    "fertility": {
+      "en": 2.0637963580463214,
+      "fr": 2.1907514450867054,
+      "ha": 1.662510159320411,
+      "sw": 1.8602503150418146,
+      "yo": 1.8663331700832575,
+      "am": 2.3695742510672058
+    },
+    "unknown_rate": {
+      "en": 0.0,
+      "fr": 0.0,
+      "ha": 0.0,
+      "sw": 0.0,
+      "yo": 0.0,
+      "am": 0.0
+    },
+    "penalised": {
+      "en": 2.0637963580463214,
+      "fr": 2.1907514450867054,
+      "ha": 1.662510159320411,
+      "sw": 1.8602503150418146,
+      "yo": 1.8663331700832575,
+      "am": 2.3695742510672058
+    },
+    "guardrail_penalty": 0.0,
+    "guardrail_overages": {
+      "en": 0.0,
+      "fr": 0.0
+    },
+    "reconstruction": 1.0,
+    "token_counts": {
+      "am": 188175,
+      "en": 182582,
+      "fr": 198596,
+      "ha": 149325,
+      "sw": 129905,
+      "yo": 160053
+    },
+    "word_counts": {
+      "am": 79413,
+      "en": 88469,
+      "fr": 90652,
+      "ha": 89819,
+      "sw": 69832,
+      "yo": 85758
+    },
+    "unknown_tokens": 0,
+    "throughput": 704756.9162921824,
+    "elapsed_seconds": 4.18600361599988
+  },
+  "competition_validation": {
+    "valid": true,
+    "path": "/content/airf-tokenizer-b5-results/b5-weight-grid-v1-1c7334e1ae351320/reference/tokenizer.json",
+    "vocab_size": 10000,
+    "file_size_bytes": 712952,
+    "tokenizers_version": "0.22.1",
+    "checks": {
+      "file_size": true,
+      "loads": true,
+      "vocabulary": true,
+      "encodes_all_languages": true,
+      "decodes": true,
+      "compatible_version": true
+    },
+    "errors": [],
+    "unknown_tokens": 0,
+    "lossy_languages": []
+  },
+  "official_checker": {
+    "path": "/content/airf-tokenizer-b5-results/b5-weight-grid-v1-1c7334e1ae351320/reference/tokenizer.json",
+    "checks": {
+      "file_size": true,
+      "loads": true,
+      "vocabulary": true,
+      "encoding": true,
+      "compatibility": true
+    },
+    "errors": [],
+    "vocab_size": 10000,
+    "tokenizers_version": "0.22.1",
+    "score": 1.9396669738781722,
+    "fertility": {
+      "en": 2.0637963580463214,
+      "fr": 2.1907514450867054,
+      "ha": 1.662510159320411,
+      "sw": 1.8602503150418146,
+      "yo": 1.8663331700832575,
+      "am": 2.3695742510672058
+    },
+    "reconstruction_penalty": 0.0,
+    "unknown_rate": {
+      "en": 0.0,
+      "fr": 0.0,
+      "ha": 0.0,
+      "sw": 0.0,
+      "yo": 0.0,
+      "am": 0.0
+    },
+    "penalised": {
+      "en": 2.0637963580463214,
+      "fr": 2.1907514450867054,
+      "ha": 1.662510159320411,
+      "sw": 1.8602503150418146,
+      "yo": 1.8663331700832575,
+      "am": 2.3695742510672058
+    },
+    "lossy_rows": 0,
+    "reconstruction": 1.0,
+    "guardrail_budget": 2.230617019959898,
+    "guardrail_overages": {
+      "en": 0.0,
+      "fr": 0.0
+    },
+    "guardrail_penalty": 0.0,
+    "throughput": 1402407.888206672,
+    "elapsed_seconds": 2.103606963999937,
+    "rows": 24000,
+    "valid": true
+  },
+  "score_delta_competition_minus_checker": 0.0,
+  "score_agreement": true,
+  "strict_failures": 0,
+  "arithmetic": {
+    "raw_target_mean": 1.9396669738781722,
+    "guardrail_budget": 2.230617019959898,
+    "headroom": 0.017871994392793224,
+    "base_score": 1.9396669738781722,
+    "reconstruction_penalty": 0.0
+  },
+  "training": null,
+  "leaderboard": {
+    "row": {
+      "team": "Maick Dane Nkou research",
+      "slug": "z-b4-reference",
+      "score": 1.9396669738781722,
+      "fertility": 1.9396669738781722,
+      "unknown_rate": 0.0,
+      "guardrail_penalty": 0.0,
+      "reconstruction": 1.0,
+      "speed_chars_per_second": 1323731.3983732408,
+      "vocab_size": 10000,
+      "status": "ranked",
+      "evaluated_at": "2026-09-16T09:39:29+00:00",
+      "en_fertility": 2.0637963580463214,
+      "fr_fertility": 2.1907514450867054,
+      "ha_fertility": 1.662510159320411,
+      "sw_fertility": 1.8602503150418146,
+      "yo_fertility": 1.8663331700832575,
+      "am_fertility": 2.3695742510672058,
+      "rank": 4
+    },
+    "failure": null
+  },
+  "reference_sha_expected": "b2f9a461ce1b0e8bff07c00d982614f49d555464b8fb1efa46e66b08b67013e4",
+  "reference_sha_matches": true
+}
