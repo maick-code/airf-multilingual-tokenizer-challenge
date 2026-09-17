@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-17T00:58:29+00:00",
+  "generated_at": "2026-09-17T01:02:18+00:00",
   "metric": "Average tokens per word plus a 100x unknown-token penalty, across Hausa, Swahili, Yoruba and Amharic, plus any amount by which English or French exceeds 1.15 times that average, plus 3x the share of rows the tokenizer fails to reconstruct exactly. Lower is better.",
   "repository": "aims-ai-research-foundations/airf-multilingual-tokenizer-challenge",
   "entries": [
@@ -13,9 +13,9 @@
       "unknown_rate": 0.0,
       "guardrail_penalty": 0.0,
       "reconstruction": 1.0,
-      "speed_chars_per_second": 3185499,
+      "speed_chars_per_second": 3783439,
       "vocab_size": 10000,
-      "evaluated_at": "2026-09-17T00:58:29+00:00",
+      "evaluated_at": "2026-09-17T01:02:17+00:00",
       "fertility_by_language": {
         "en": 1.7826,
         "fr": 2.0435,
@@ -35,9 +35,9 @@
       "unknown_rate": 0.0,
       "guardrail_penalty": 0.0,
       "reconstruction": 1.0,
-      "speed_chars_per_second": 3247437,
+      "speed_chars_per_second": 4027116,
       "vocab_size": 10000,
-      "evaluated_at": "2026-09-17T00:58:29+00:00",
+      "evaluated_at": "2026-09-17T01:02:17+00:00",
       "fertility_by_language": {
         "en": 1.8261,
         "fr": 2.1739,
@@ -57,9 +57,9 @@
       "unknown_rate": 0.0,
       "guardrail_penalty": 0.1294,
       "reconstruction": 1.0,
-      "speed_chars_per_second": 5348864,
+      "speed_chars_per_second": 5016569,
       "vocab_size": 10000,
-      "evaluated_at": "2026-09-17T00:58:29+00:00",
+      "evaluated_at": "2026-09-17T01:02:17+00:00",
       "fertility_by_language": {
         "en": 1.9565,
         "fr": 2.2609,
@@ -79,9 +79,9 @@
       "unknown_rate": 0.0,
       "guardrail_penalty": 0.2287,
       "reconstruction": 1.0,
-      "speed_chars_per_second": 7267550,
+      "speed_chars_per_second": 6430726,
       "vocab_size": 10000,
-      "evaluated_at": "2026-09-17T00:58:29+00:00",
+      "evaluated_at": "2026-09-17T01:02:17+00:00",
       "fertility_by_language": {
         "en": 2.1304,
         "fr": 2.4783,
