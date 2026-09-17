@@ -2,5 +2,4 @@ team: Maick Dane Nkou
 members:
 - Maick Dane Nkou
 affiliation: AIMS SOUTH AFRICA
-approach: Lossless BPE 10000, space_word boundaries, no normalization; official train
-  only, weights-b4; validation 1.939667, reconstruction 100%.
+approach: Lossless BPE 10000, space_word boundaries, no normalization; official train only, fr125-yo5-am5; validation 1.938409, reconstruction 100%.
