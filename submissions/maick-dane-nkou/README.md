@@ -1,84 +1,129 @@
-# Maick Dane Nkou — lossless BPE, weights-b4
+# Maick Dane Nkou — lossless BPE, raw-sw75-ha425-yo55-am55-fr128125
 
-## Submitted recipe
+## Proposed recipe
 
-- **weights-b4**: BPE with 10,000 vocabulary entries, minimum frequency 5.
-- Lossless `space_word` boundaries: isolated `Split(Regex(r" ?\S+|\s+"))`,
-  followed by `ByteLevel(add_prefix_space=False, use_regex=False)`.
-- Full 256-symbol byte alphabet and matching ByteLevel decoder.
-- No normalizer, special tokens or post-processor.
-- Official train split only: 240,000 original rows, balanced round-robin;
-  **ha/sw/yo/am x4, en/fr x1** (720,000 weighted rows).
+- **raw-sw75-ha425-yo55-am55-fr128125**: BPE with 10,000 vocabulary entries and
+  minimum frequency 5.
+- **Raw ByteLevel pieces**: the pre-tokenizer is a single
+  `ByteLevel(add_prefix_space=False, use_regex=False)` with **no whitespace
+  split**, so BPE merges may cross word boundaries. This is the only
+  architectural change versus the previous `fr125-yo5-am5` submission; with
+  identical weights it alone improved the full-validation score from 1.938409
+  to 1.930205 before any re-tuning.
+- Language weights in the order en, fr, ha, sw, yo, am:
+  **x1, x1.28125, x4.25, x7.5, x5.5, x5.5** (units 32, 41, 136, 240, 176, 176
+  over denominator 32, applied with the deterministic cumulative train-only
+  schedule, so every one of the 240,000 train rows appears at least once).
+- Full 256-symbol byte alphabet
+  (`initial_alphabet=sorted(pre_tokenizers.ByteLevel.alphabet())`) and matching
+  ByteLevel decoder.
+- No normalizer, special tokens, post-processor or UNK token.
+- Official train split only: 240,000 original rows, 1,001,250 weighted rows.
 - Dataset: `Similoluwa/african-multilingual-tokenizer-challenge` @ `v1.0.0`.
 - `tokenizers==0.22.1`; no pretrained tokenizer, external corpus, downloaded
-  vocabulary or merge table.
+  vocabulary or merge table. Three independent training runs produced the
+  identical bytes (see fingerprint below).
 
-## Recorded official-checker validation results
+## Measured public-validation results
 
-These measurements were produced in the participant's Colab session on all
-**24,000 official validation rows** (4,000 per language), using the pinned
-`profile_submission` helper. They are not hidden-test or leaderboard scores.
-The uploaded tokenizer's SHA-256 matches the b4 file evaluated in those runs.
-The final repository checks verify this identity; they do not claim a new
-full-validation run in the repository environment.
+Measured with the repository's own scoring code
+(`competition.evaluation.evaluate_submission` and the pinned
+`profile_submission` helper) on all **24,000 official validation rows**
+(4,000 per language). These are validation measurements, not private-test or
+final leaderboard scores.
 
-| Language | Tokens/word | UNK rate |
-| --- | ---: | ---: |
-| English | 2.063796 | 0.000000 |
-| French | 2.190751 | 0.000000 |
-| Hausa | 1.662510 | 0.000000 |
-| Swahili | 1.860250 | 0.000000 |
-| Yoruba | 1.866333 | 0.000000 |
-| Amharic | 2.369574 | 0.000000 |
+| Language | Tokens | Words | Tokens/word | UNK rate |
+| --- | ---: | ---: | ---: | ---: |
+| English | 184,137 | 88,469 | 2.081373 | 0.000000 |
+| French | 196,994 | 90,652 | 2.173079 | 0.000000 |
+| Hausa* | 151,067 | 89,819 | 1.681905 | 0.000000 |
+| Swahili* | 123,154 | 69,832 | 1.763575 | 0.000000 |
+| Yoruba* | 159,815 | 85,758 | 1.863558 | 0.000000 |
+| Amharic* | 188,443 | 79,413 | 2.372949 | 0.000000 |
 
-Per-language values above are rounded to six decimal places.
+\* scored languages.
 
-- **Full validation score: 1.939666974** (rounded to nine decimal places).
-- Base score: 1.939666974; guardrail penalty: 0; reconstruction penalty: 0.
-- Official reconstruction: 100%; the notebook also passed stricter exact
-  reconstruction checks on every validation string.
-- EN/FR headroom: **1.787199439%** (rounded to nine decimal places).
+- **Full validation score: 1.9204967724666027** (previous submission
+  fr125-yo5-am5: 1.938409033803239; improvement 0.017912).
+- Base score: 1.9204967724666027; guardrail penalty: 0; reconstruction
+  penalty: 0.
+- Official reconstruction: 100%; the notebook additionally passes a stricter
+  exact-match audit of `decode(encode(text)) == text` on every validation row
+  (both `skip_special_tokens` modes) and on adversarial regression strings.
+- Guardrail: budget = 1.15 x scored mean = 2.208571; English 2.081373 and
+  French 2.173079 are both under it. French headroom is 1.6%, comparable to
+  previous submissions; small hidden-test drifts could in principle incur a
+  small guardrail charge there, nothing is guaranteed.
+- Runtime: evaluation throughput ~5.0-5.3M characters/second on the research
+  machine, i.e. ~0.95x the character-level baseline time — well inside the 5x
+  limit (the official leaderboard protocol check with the shipped
+  character-level baseline passed with no failure).
+
+## Fingerprints
+
 - Tokenizer SHA-256:
-  `b2f9a461ce1b0e8bff07c00d982614f49d555464b8fb1efa46e66b08b67013e4`.
-- Official checker commit: `75578f2400c39b1f8e31ce7e7104b37fbc470d11`.
-- Official checker SHA-256:
-  `1727de34136097eb48addabf90501589bdfefa31c20e201bab53c38f2f7c9688`.
+  `4043a0499c1e4578bbc636a91f580abfe77dbe0ac52af4dbb0335743e973f5ed`
+  (identical across three independent training runs).
+- Official train serialization used for training (round-robin
+  en/fr/ha/sw/yo/am JSONL): SHA-256
+  `85140695f33ff87ead838dbac449fbc7f13aec72dde4129556d7538ba17cbc4f`.
+- Official CSV exports mirrored from
+  `Similoluwa/african-multilingual-tokenizer-challenge` @ `v1.0.0`:
+  train SHA-256
+  `bf807cb78e58a6dfb3ba50652013d54fb1d2f9f5e6eec4c98f22d5989364efd7`,
+  validation SHA-256
+  `d010df416334c0f9086d0831e7aa19c2a7d233b08032e2a7d3118f512d3c0f00`.
 
-The full score includes the mean target-language fertility/UNK component and
-both official penalties. The former participant-imposed 5% headroom policy is
-not an official rule and is not enforced here. The small remaining margin means
-that penalties are possible on different test data; no hidden-test score or rank
-is guaranteed.
+## Research summary (what was tried)
 
-## Change from the previous submission
+All candidates below were trained only on the official train split and
+evaluated on the full 24,000-row official validation split.
 
-This file replaces `weights-yo-am4`, previously measured at 1.9631891569 on the
-same public validation split, with SHA-256
-`1519895eace8680d2752b333f5efd82f80ade21bcd6210704ec17de55dafe035`.
-The validation score decreases by approximately **1.20%**, with less EN/FR margin.
-The participant selected b4 rather than the lowest-scoring optimization candidate
-because that alternative had only about 0.1% margin.
+1. **Baseline audit.** The previous fr125-yo5-am5 tokenizer was reproduced
+   byte-for-byte locally (SHA-256
+   `6f387416333fdfff5d45135313b00d5ef5ffd580b4c15ad851cd01f13b81d0e5`) and
+   re-measured at exactly 1.938409033803239, confirming the baseline.
+2. **Weight sweep (word-boundary architecture).** Pushing Swahili weight
+   (x4 -> x7.5) and adjusting Hausa/Yoruba/Amharic improved the score to
+   1.929248 (sw75-ha4), but squeezed the French guardrail margin.
+3. **min_frequency sweep (3/5/7/8).** No effect at these weights: the top
+   10,000 merges all sit well above the threshold. Not a lever here.
+4. **Structural variants.** WordPiece failed (the library requires an UNK
+   token at encode time, which is incompatible with zero-UNK lossless
+   submission). Punctuation-splitting pre-regexes hurt badly (2.031845).
+5. **Raw pieces (the winning change).** Removing the whitespace split so
+   merges may cross word boundaries improved every configuration tested:
+   fr125 weights 1.938409 -> 1.930205; retuned weights
+   (en x1, fr x1.28125, ha x4.25, sw x7.5, yo x5.5, am x5.5) ->
+   **1.920497**. The gain comes mostly from high-frequency cross-word
+   fragments in the Latin-script languages; it also lowers French fertility,
+   which restores guardrail margin.
+
+Selected candidates on the full validation split:
+
+| Candidate | Score | ha | sw | yo | am | fr headroom |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| fr125-yo5-am5 (previous submission) | 1.938409 | 1.6862 | 1.8814 | 1.8537 | 2.3323 | 2.1% |
+| sw75-ha4 (word boundaries) | 1.929248 | 1.6958 | 1.7797 | 1.8671 | 2.3744 | 0.3% |
+| raw-fr125 (raw pieces, old weights) | 1.930205 | 1.6656 | 1.8714 | 1.8456 | 2.3381 | 4.0% |
+| raw-sw75-ha4 | 1.925698 | 1.6889 | 1.7506 | 1.8754 | 2.3879 | 2.2% |
+| **raw-sw75-ha425-yo55-am55-fr128125 (this submission)** | **1.920497** | 1.6819 | 1.7636 | 1.8636 | 2.3729 | 1.6% |
+
+The submitted candidate improves Hausa, Swahili, English and French versus
+the previous submission, keeps Yoruba within 0.01 and Amharic within 0.041
+of it, and stays ahead of the current leaderboard's best Yoruba and Amharic
+figures. The alternative `raw-sw75-ha425-yo55` scored 1.921879 with 1.9%
+French headroom but pushes Amharic to 2.4011; the submitted variant was
+preferred for its more balanced profile across all four scored languages.
 
 ## Reproduce
 
-Run `notebook.ipynb` end-to-end in Colab on CPU. The default
-`RECIPE = "weights-b4"` trains from scratch on the complete official train split,
-then evaluates the saved tokenizer on the complete official validation split.
-No uploaded tokenizer or diagnostic archive is required.
-
-After complete validation, zero UNK, zero official penalties and strict
-reconstruction checks, Colab automatically downloads `tokenizer.json`,
-`metadata.yml` and `README.md`. Allow multiple downloads if prompted.
-A failed check blocks export, not the display of the official score.
-The 5% headroom policy is informational, not an export gate.
-
-Exports are written to
-`artifacts/submission-weights-b4/export/maick-dane-nkou/`, not over the repository
-submission. The generated README records the new score, file SHA-256, data
-fingerprints and training time. No report-upload step or review archive is used.
-Downloading files does not automatically submit them to GitHub.
-
-BPE merge ties can vary between training runs. Always use the new file's measured
-score rather than assuming that retraining will reproduce the historical bytes.
-The optional `RECIPE = "weights-yo-am4"` reproduces the **previous** recipe, not
-the tokenizer currently submitted here.
+Run `notebook.ipynb` end-to-end on CPU (Google Colab or a clone). It loads
+the official train split of
+`Similoluwa/african-multilingual-tokenizer-challenge` @ `v1.0.0`, trains the
+tokenizer from scratch with the exact recipe above, and asserts that the
+resulting `tokenizer.json` has SHA-256
+`4043a0499c1e4578bbc636a91f580abfe77dbe0ac52af4dbb0335743e973f5ed` before
+evaluating it on the full official validation split. An offline fallback is
+included: if the two official CSV exports are already present locally, the
+notebook uses them after checking their SHA-256 fingerprints.

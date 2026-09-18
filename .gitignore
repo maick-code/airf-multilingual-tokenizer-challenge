@@ -24,6 +24,11 @@ organizer-private/
 dataset_release/
 local_experiments/
 
+# Research scratch copies, never published
+/submission_ref/
+/notebooks_ref/
+
 # Secrets, never commit
 .env
 .env.*
+/data/
