@@ -98,6 +98,16 @@ evaluated on the full 24,000-row official validation split.
    **1.920497**. The gain comes mostly from high-frequency cross-word
    fragments in the Latin-script languages; it also lowers French fertility,
    which restores guardrail margin.
+6. **Unigram (explored, rejected for non-reproducibility).** A Unigram model
+   with the same raw-piece architecture scored **1.879618** on the same split
+   (ha 1.6177, sw 1.6630, yo 1.8104, am 2.4275; zero UNK, 100%
+   reconstruction). However, two independent runs of the identical recipe
+   produced *different* vocabularies (9,233 of 10,000 pieces differ) even
+   though both score identically to six decimals: the EM pruning is not
+   byte-deterministic. Since the submission contract requires a notebook that
+   reproduces the submitted bytes exactly, Unigram was rejected. Weight
+   retunes of it also either sacrificed the Amharic lead (am 2.4275) or
+   pushed the French guardrail margin below 1%.
 
 Selected candidates on the full validation split:
 
@@ -115,6 +125,12 @@ of it, and stays ahead of the current leaderboard's best Yoruba and Amharic
 figures. The alternative `raw-sw75-ha425-yo55` scored 1.921879 with 1.9%
 French headroom but pushes Amharic to 2.4011; the submitted variant was
 preferred for its more balanced profile across all four scored languages.
+
+The submitted BPE was reproduced byte-for-byte in four independent settings:
+three training runs in the research sandbox and one run on a clean CI runner
+from a fresh Hub download of the official dataset (see
+`.github/scripts/remote_train.py` on the research branch), all yielding the
+same SHA-256.
 
 ## Reproduce
 
