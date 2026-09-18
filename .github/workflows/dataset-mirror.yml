@@ -13,7 +13,7 @@ on:
     paths: [.github/workflows/dataset-mirror.yml]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   mirror:
@@ -63,3 +63,12 @@ jobs:
             data/public/validation.csv
           retention-days: 14
           if-no-files-found: error
+      - name: Push CSVs to scratch data-mirror branch
+        run: |
+          git config user.name "amtc-data-mirror"
+          git config user.email "amtc-data-mirror@users.noreply.github.com"
+          git checkout -B data-mirror
+          git add -f data/public/train.csv data/public/validation.csv
+          git commit -m "data: mirror official train/validation CSVs @v1.0.0 (research transport only)"
+          git push --force origin data-mirror
+          echo "PUSH_OK"
